@@ -2,6 +2,9 @@ use 5.16.0;
 use strict;
 use warnings;
 
+# TODO: add some response inflator
+# TODO: trace interface topology for SPORE spec?
+
 package REST::Cot::Fragment;
 use Carp qw[croak];
 use AutoLoader;
@@ -12,6 +15,7 @@ sub AUTOLOAD {
   my $self = shift;
   my $type = ref($self) 
     or return;
+  my @args = @_;
   my $fragment = $AUTOLOAD;
 
   $fragment =~ s/.*:://;
@@ -24,7 +28,7 @@ sub AUTOLOAD {
 
     $new->{parent} = sub { $self };
     $new->{name} = $fragment;
-    $new->{args} = [@_];
+    $new->{args} = [@args];
 
     $new->{projenitor} = sub {
       state $ancestor;
@@ -41,11 +45,12 @@ sub AUTOLOAD {
       return undef unless ref($new->{projenitor}->());
       return $path if $path;
 
+      $DB::single=1;
       $path = @{ $new->{args} }?
         join ( '/', $new->{parent}->()->{path}->(), @{ $new->{args} }, $new->{name} ) :
         join ( '/', $new->{parent}->()->{path}->(), $new->{name} );
 
-      return '/'.$path;
+      return $path;
     };
 
     $new->{client} = sub {
@@ -54,7 +59,7 @@ sub AUTOLOAD {
       
       my $is_valid = sub {
         my $client = shift;
-        my @methods = qw [GET PUT PATCH POST DELETE OPTIONS HEAD];
+        my @methods = qw[GET PUT PATCH POST DELETE OPTIONS HEAD];
         my $implements = scalar( grep { $client->can($_) } @methods ); 
         return ref($client) && $implements == scalar(@methods);
       };

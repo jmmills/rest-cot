@@ -15,7 +15,7 @@ sub new {
   my $ref = {};
   $ref->{parent} = undef;
   $ref->{client} = REST::Client->new({host => $host, @_});
-  $ref->{path} = sub {};
+  $ref->{path} = sub { '' };
   bless($ref, 'REST::Cot::Fragment');
   
   return $ref;
