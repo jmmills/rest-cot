@@ -6,6 +6,8 @@ package REST::Cot::Fragment;
 use Carp qw[croak];
 use AutoLoader;
 
+our $AUTOLOAD;
+
 sub AUTOLOAD {
   my $self = shift;
   my $type = ref($self) 
@@ -40,10 +42,10 @@ sub AUTOLOAD {
       return $path if $path;
 
       $path = @{ $new->{args} }?
-        join '/', $new->{parent}->{path}->(), @{ $new->{args} }, $new->{name} :
-        join '/', $new->{parent}->{path}->();
+        join ( '/', $new->{parent}->()->{path}->(), @{ $new->{args} }, $new->{name} ) :
+        join ( '/', $new->{parent}->()->{path}->(), $new->{name} );
 
-      return $path;
+      return '/'.$path;
     };
 
     $new->{client} = sub {
@@ -68,6 +70,8 @@ sub AUTOLOAD {
       my $method = shift;
       $new->{client}->$method( $new->{path}->(), @_ );
     };
+
+    return $new;
   };
 
   return ($self->{fragments}->{$fragment} = $sub)->();
