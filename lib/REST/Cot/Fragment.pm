@@ -41,13 +41,13 @@ sub AUTOLOAD {
   return ($self->{fragments}->{$fragment} = $sub)->();
 }
 
-sub GET     { shift->{method}->( (caller(0))[3], @_ ); }
-sub PUT     { shift->{method}->( (caller(0))[3], @_ ); }
-sub PATCH   { shift->{method}->( (caller(0))[3], @_ ); }
-sub POST    { shift->{method}->( (caller(0))[3], @_ ); }
-sub DELETE  { shift->{method}->( (caller(0))[3], @_ ); }
-sub OPTIONS { shift->{method}->( (caller(0))[3], @_ ); }
-sub HEAD    { shift->{method}->( (caller(0))[3], @_ ); }
+sub GET     { shift->{method}->( 'GET', @_ ); }
+sub PUT     { shift->{method}->( 'PUT', @_ ); }
+sub PATCH   { shift->{method}->( 'PATCH', @_ ); }
+sub POST    { shift->{method}->( 'POST', @_ ); }
+sub DELETE  { shift->{method}->( 'DELETE', @_ ); }
+sub OPTIONS { shift->{method}->( 'OPTIONS', @_ ); }
+sub HEAD    { shift->{method}->( 'HEAD', @_ ); }
 
 1;
 
