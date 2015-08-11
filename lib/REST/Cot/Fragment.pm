@@ -4,9 +4,10 @@ use warnings;
 
 # TODO: add some response inflator
 # TODO: trace interface topology for SPORE spec?
+# TODO: trace interface topology for Swagger spec?
 
 package REST::Cot::Fragment;
-use Carp qw[croak];
+use REST::Cot::Generators;
 use AutoLoader;
 
 our $AUTOLOAD;
@@ -30,51 +31,10 @@ sub AUTOLOAD {
     $new->{name} = $fragment;
     $new->{args} = [@args];
 
-    $new->{projenitor} = sub {
-      state $ancestor;
-      return $ancestor if $ancestor;
-
-      $ancestor = $ancestor->{parent}->() 
-        while( ref($ancestor->{parent}) eq 'CODE' );
-
-      return $ancestor;
-    };
-
-    $new->{path} = sub { 
-      state $path;
-      return undef unless ref($new->{projenitor}->());
-      return $path if $path;
-
-      $DB::single=1;
-      $path = @{ $new->{args} }?
-        join ( '/', $new->{parent}->()->{path}->(), @{ $new->{args} }, $new->{name} ) :
-        join ( '/', $new->{parent}->()->{path}->(), $new->{name} );
-
-      return $path;
-    };
-
-    $new->{client} = sub {
-      state $c;
-      return $c if ref($c);
-      
-      my $is_valid = sub {
-        my $client = shift;
-        my @methods = qw[GET PUT PATCH POST DELETE OPTIONS HEAD];
-        my $implements = scalar( grep { $client->can($_) } @methods ); 
-        return ref($client) && $implements == scalar(@methods);
-      };
-
-      $c = $new->{progenitor}->()->{client};
-      croak "$c does not provide an acceptable client interface"
-        unless $is_valid->($c);
-
-      return $c
-    };
-
-    $new->{method} = sub {
-      my $method = shift;
-      $new->{client}->$method( $new->{path}->(), @_ );
-    };
+    $new->{progenitor} = REST::Cot::Generators::progenitor($new);
+    $new->{path}       = REST::Cot::Generators::path($new);
+    $new->{client}     = REST::Cot::Generators::client($new);
+    $new->{method}     = REST::Cot::Generators::method($new);
 
     return $new;
   };
