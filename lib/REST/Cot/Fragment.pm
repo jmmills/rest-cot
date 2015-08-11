@@ -8,7 +8,6 @@ use warnings;
 
 package REST::Cot::Fragment;
 use REST::Cot::Generators;
-use AutoLoader;
 
 our $AUTOLOAD;
 
@@ -51,6 +50,4 @@ sub OPTIONS { shift->{method}->( (caller(0))[3], @_ ); }
 sub HEAD    { shift->{method}->( (caller(0))[3], @_ ); }
 
 1;
-
-__END__;
 
