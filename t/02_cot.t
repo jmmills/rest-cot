@@ -10,4 +10,8 @@ isa_ok $cot, 'REST::Cot::Fragment'
 can_ok $cot, qw[GET POST PUT PATCH DELETE OPTIONS HEAD];
 isa_ok $cot->{client}, 'REST::Client';
 
+my $d = $cot->a->b->c->d;
+is "$d", '/a/b/c/d';
+is ~$d, '/a';
+
 done_testing;

@@ -8,6 +8,10 @@ use warnings;
 
 package REST::Cot::Fragment;
 use REST::Cot::Generators;
+use overload
+  '""' => sub { shift->{path}->() },
+  '~' => sub { shift->{progenitor}->() },
+  'fallback' => 1;
 
 our $AUTOLOAD;
 
@@ -26,13 +30,13 @@ sub AUTOLOAD {
   my $sub = sub {
     my $new = bless({}, __PACKAGE__);
 
-    $new->{parent} = sub { $self };
+    $new->{parent} = $self;
     $new->{name} = $fragment;
     $new->{args} = [@args];
+    $new->{client} = $self->{client};
 
     $new->{progenitor} = REST::Cot::Generators::progenitor($new);
     $new->{path}       = REST::Cot::Generators::path($new);
-    $new->{client}     = REST::Cot::Generators::client($new);
     $new->{method}     = REST::Cot::Generators::method($new);
 
     return $new;
