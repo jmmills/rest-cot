@@ -5,6 +5,13 @@ package REST::Cot;
 
 # ABSTRACT: REST easier, pythons hammock for perl
 
+=head1 SYNOPSIS
+
+  my $metacpan = REST::Cot->new('http://api.metacpan.org/');
+  my $r = $metacpan->v0->author->JMMILLS->GET();
+
+=cut
+
 use REST::Client;
 use REST::Cot::Fragment;
 

@@ -3,8 +3,10 @@ use strict;
 use warnings;
 
 package REST::Cot::Generators;
+use Email::MIME::ContentType;
+use JSON;
+use Carp qw[confess];
 use namespace::clean;
-use Carp qw[croak];
 
 sub progenitor {
     my $self = shift;
@@ -38,13 +40,37 @@ sub path {
     };
 }
 
-# TODO: make this inflate to something?
 sub method {
     my $self = shift;
     return sub {
         my $method = shift;
         my $self = shift;
-        return $self->{client}->$method( "$self", @_? \@_ : undef )
+        my $response = $self->{client}->$method( "$self", @_? \@_ : undef );
+
+        if (my $content_type = $response->responseHeader('Content-Type')) {
+          $content_type = parse_content_type($content_type);
+          my $body = $response->responseContent;
+          my $code = $response->responseCode;
+          my $type = $content_type->{type};
+          my $subtype = $content_type->{subtype};
+
+          if ($type eq 'application') {
+            my $decoded = $body;
+
+            $decoded = from_json($body)
+              if ($subtype eq 'json');
+
+            $decoded = $response->responseXpath
+              if ($subtype eq 'xml'); 
+
+            return !wantarray? $decoded : ($decoded, $code, $response);
+          } else {
+              return $response;
+          }
+
+        } else {
+          confess('Response Content-Type header missing')
+        }
     }
 }
 
