@@ -3,12 +3,21 @@ use strict;
 use warnings;
 package REST::Cot;
 
-# ABSTRACT: REST easier, pythons hammock for perl
+# ABSTRACT: REST easier, lay on a cot
 
 =head1 SYNOPSIS
 
+This package is a blatant rip-off of Python's Hammock library. 
+
   my $metacpan = REST::Cot->new('http://api.metacpan.org/');
-  my $r = $metacpan->v0->author->JMMILLS->GET();
+  my $data = $metacpan->v0->author->JMMILLS->GET();
+
+  say $data->{email}->[0]; # jmmills@cpan.org
+
+=head1 CAVEAT
+
+This package was developed for an application I maintain as conviencince. It's under-documented, and under-tested.
+YMMV
 
 =cut
 
