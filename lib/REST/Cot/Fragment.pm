@@ -45,6 +45,10 @@ sub AUTOLOAD {
   return ($self->{fragments}->{$fragment} = $sub)->();
 }
 
+sub DESTROY {
+  # We don't want this being called via autoload since an object is out of scope by this point
+}
+
 sub GET     { shift->{method}->( 'GET', @_ ); }
 sub PUT     { shift->{method}->( 'PUT', @_ ); }
 sub PATCH   { shift->{method}->( 'PATCH', @_ ); }
