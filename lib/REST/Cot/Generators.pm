@@ -45,7 +45,7 @@ sub method {
     return sub {
         my $method = shift;
         my $self = shift;
-        my $response = $self->{client}->$method( "$self", @_? \@_ : undef );
+        my $response = $self->{client}->$method( "$self", @_ );
 
         if (my $content_type = $response->responseHeader('Content-Type')) {
           $content_type = parse_content_type($content_type);
