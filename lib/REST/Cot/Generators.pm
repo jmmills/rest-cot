@@ -1,8 +1,8 @@
+package REST::Cot::Generators;
+
 use 5.16.0;
 use strict;
 use warnings;
-
-package REST::Cot::Generators;
 use Email::MIME::ContentType;
 use JSON;
 use Carp qw[confess];

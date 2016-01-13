@@ -1,7 +1,8 @@
+package REST::Cot;
+
 use 5.16.0;
 use strict;
 use warnings;
-package REST::Cot;
 
 # ABSTRACT: REST easier, lay on a cot
 

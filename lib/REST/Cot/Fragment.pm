@@ -1,12 +1,12 @@
+package REST::Cot::Fragment;
+
 use 5.16.0;
 use strict;
 use warnings;
 
-# TODO: add some response inflator
 # TODO: trace interface topology for SPORE spec?
 # TODO: trace interface topology for Swagger spec?
 
-package REST::Cot::Fragment;
 use REST::Cot::Generators;
 use overload
   '""' => sub { shift->{path}->() },
