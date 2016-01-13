@@ -24,17 +24,8 @@ sub path {
         return $path if $path;
 
         $path = @{ $self->{args} }?
-        join ( '/', $self->{parent}
-                        ->{path}
-                        ->(),
-                    @{ $self->{args} },
-                    $self->{name}
-        ) :
-        join ( '/', $self->{parent}
-                        ->{path}
-                        ->(),
-                        $self->{name}
-        );
+          join ( '/', $self->{parent}->{path}->(), $self->{name}, @{ $self->{args} } ) :
+          join ( '/', $self->{parent}->{path}->(), $self->{name} );
 
         return $path;
     };

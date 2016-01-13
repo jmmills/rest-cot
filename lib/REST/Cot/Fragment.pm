@@ -24,8 +24,9 @@ sub AUTOLOAD {
 
   $fragment =~ s/.*:://;
 
-  return $self->{fragments}->{$fragment}->()
-    if exists $self->{fragments}->{$fragment};
+#  DISABLE fragment caching, this is slower but the interface works correctly  
+#  return $self->{fragments}->{$fragment}->()
+#    if exists $self->{fragments}->{$fragment};
 
   my $sub = sub {
     my $new = bless({}, __PACKAGE__);
