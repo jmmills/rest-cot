@@ -58,9 +58,8 @@ sub method {
           } else {
               return $response;
           }
-
         } else {
-          confess('Response Content-Type header missing')
+          return $response;
         }
     }
 }
