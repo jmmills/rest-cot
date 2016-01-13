@@ -22,6 +22,6 @@ is $obj->foo->{path}->(), '/foo';
 
 is $obj->foo->bar->{path}->(), '/foo/bar';
 
-is $obj->stuff(qw[a b])->{path}->(), '/a/b/stuff';
+is $obj->stuff(qw[a b])->{path}->(), '/stuff/a/b';
 
 done_testing();
