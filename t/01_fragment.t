@@ -24,4 +24,6 @@ is $obj->foo->bar->{path}->(), '/foo/bar';
 
 is $obj->stuff(qw[a b])->{path}->(), '/stuff/a/b';
 
+is $obj->stuff('v0.1')->{path}->(), '/stuff/v0.1';
+
 done_testing();
