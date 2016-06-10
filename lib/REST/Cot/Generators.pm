@@ -4,6 +4,7 @@ use 5.16.0;
 use strict;
 use warnings;
 use Email::MIME::ContentType;
+use URI;
 use JSON;
 use Carp qw[confess];
 use namespace::clean;
@@ -31,11 +32,34 @@ sub path {
     };
 }
 
+sub merged_query {
+  my $self = shift;
+
+  return sub {
+      return ref($self->{query}) eq 'HASH'? $self->{query} : {};
+  };
+}
+
+sub uri {
+  my $self = shift;
+
+  return sub {
+      my $path = $self->{path}->();
+      my $q = $self->{merged_query}->();
+      my $uri = URI->new($path);
+
+      $uri->query_form($q);
+
+      return $uri
+  };
+}
+
 sub method {
     my $self = shift;
     return sub {
         my $method = shift;
         my $self = shift;
+
         my $response = $self->{client}->$method( "$self", @_ );
 
         if (my $content_type = $response->responseHeader('Content-Type')) {

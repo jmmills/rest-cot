@@ -22,6 +22,7 @@ YMMV
 
 =cut
 
+use URI;
 use REST::Client;
 use REST::Cot::Fragment;
 
@@ -34,6 +35,7 @@ sub new {
     $ref->{client} = REST::Client->new({host => $host, @_});
     $ref->{root} = 1;
     $ref->{path} = sub { '' };
+
     bless($ref, 'REST::Cot::Fragment');
 
     return $ref;

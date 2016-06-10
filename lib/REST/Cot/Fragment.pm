@@ -7,9 +7,19 @@ use warnings;
 # TODO: trace interface topology for SPORE spec?
 # TODO: trace interface topology for Swagger spec?
 
+use namespace::autoclean;
+use Hash::Merge::Simple 'merge';
 use REST::Cot::Generators;
 use overload
-  '""' => sub { shift->{path}->() },
+  '""' => sub { 
+            my $self = shift;
+            return $self->{uri}
+                        ->()
+                        ->as_string()
+            if ref($self->{uri}) eq 'CODE';
+
+            return $self->{path}->();
+          },
   '~' => sub { shift->{progenitor}->() },
   'fallback' => 1;
 
@@ -33,12 +43,17 @@ sub AUTOLOAD {
 
     $new->{parent} = $self;
     $new->{name} = $fragment;
-    $new->{args} = [@args];
+    $new->{query} = {};
     $new->{client} = $self->{client};
 
-    $new->{progenitor} = REST::Cot::Generators::progenitor($new);
-    $new->{path}       = REST::Cot::Generators::path($new);
-    $new->{method}     = REST::Cot::Generators::method($new);
+    $new->{args} = [grep { !ref($_) } @args];
+    $new->{query} = merge(grep { ref($_) eq 'HASH'} @args) || {};
+
+    $new->{progenitor}   = REST::Cot::Generators::progenitor($new);
+    $new->{uri}          = REST::Cot::Generators::uri($new);
+    $new->{path}         = REST::Cot::Generators::path($new);
+    $new->{method}       = REST::Cot::Generators::method($new);
+    $new->{merged_query} = REST::Cot::Generators::merged_query($new);
 
     return $new;
   };
