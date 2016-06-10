@@ -1,5 +1,6 @@
 use strict;
 use warnings;
+use URI;
 use REST::Client;
 use Test::More;
 
@@ -32,5 +33,10 @@ isa_ok $obj->foo->{uri}->(), 'URI';
 isa_ok $obj->foo({ 'a' => 'b', 'c' => 'd' })->{uri}->(), 'URI';
 
 like $obj->foo({ 'a' => 'b', 'c' => 'd' }, 'bar'), qr|/foo/bar\?|;
+
+my $u = $obj->foo({'a' => 'b'})->bar({'c' => 'd'})->{uri}->();
+my $q = {$u->query_form};
+
+is_deeply($q, {'a' => 'b', 'c' => 'd'});
 
 done_testing();

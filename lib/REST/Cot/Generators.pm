@@ -7,7 +7,8 @@ use Email::MIME::ContentType;
 use URI;
 use JSON;
 use Carp qw[confess];
-use namespace::clean;
+use Hash::Merge::Simple 'merge';
+use namespace::autoclean;
 
 sub progenitor {
     my $self = shift;
@@ -36,7 +37,11 @@ sub merged_query {
   my $self = shift;
 
   return sub {
-      return ref($self->{query}) eq 'HASH'? $self->{query} : {};
+      if ($self->{parent}->{merged_query}) {
+          return merge($self->{query}, $self->{parent}->{merged_query}->());
+      } else {
+          return $self->{query};
+      }
   };
 }
 
